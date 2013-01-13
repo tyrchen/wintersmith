@@ -25,7 +25,8 @@ class Page extends ContentPlugin
     
   getIntro: (base) ->
     @_html ?= @getHtml(base)
-    idx = ~@_html.indexOf('<span class="more') or ~@_html.indexOf('<h2') or ~@_html.indexOf('<hr')
+    #idx = ~@_html.indexOf('<span class="more') or ~@_html.indexOf('<h2') or ~@_html.indexOf('<hr')
+    idx = ~@_html.indexOf('<!--more-->')
     if idx
       @_intro = @_html.substr 0, ~idx
     else
