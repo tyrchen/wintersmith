@@ -175,6 +175,7 @@ ContentTree.fromDirectory = (directory, args..., callback) ->
                   plugin.class.fromFile relname, base, (error, instance) ->
                     if not error
                       instance.parent = tree
+                      instance.stats = stats
                       tree[basename] = instance
                       tree._[plugin.treeName].push instance
                     callback error
