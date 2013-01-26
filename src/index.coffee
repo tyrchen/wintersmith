@@ -9,11 +9,13 @@ defaultPlugins =
   Page: require('./plugins/markdown-page')
   MarkdownPage: require('./plugins/markdown-page')
   JsonPage: require('./plugins/json-page')
+  YamlPage: require('./plugins/yaml-page')
   JadeTemplate: require('./plugins/jade-template')
 
 # register default plugins
 registerContentPlugin 'pages', '**/*.*(markdown|mkd|md)', defaultPlugins.MarkdownPage
 registerContentPlugin 'pages', '**/*.json', defaultPlugins.JsonPage
+registerContentPlugin 'pages', '**/*.yml', defaultPlugins.YamlPage
 registerTemplatePlugin '**/*.jade', defaultPlugins.JadeTemplate
 
 loadContents = (location, callback) ->
