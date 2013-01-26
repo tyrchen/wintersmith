@@ -13,6 +13,7 @@ usage = """
     #{ 'preview'.bold } [options] - run local webserver
     #{ 'new'.bold } <location> - create a new site
     #{ 'compose'.bold } <title> - compose a new document
+    #{ 'deploy'.bold } - deploy a site to github pages
 
     also see [command] --help
 
