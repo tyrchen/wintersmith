@@ -5,6 +5,7 @@ Page = require './page'
 yaml = require 'js-yaml'
 highlighter = require 'highlight.js'
 marked = require 'marked'
+jade = require 'jade'
 
 readYAML = (filename, callback) ->
   ### read and try to parse *filename* as yaml ###
@@ -15,7 +16,10 @@ readYAML = (filename, callback) ->
       try
         rv = yaml.load buffer.toString()
         traverseJson rv, (item, key) ->
-          item[key] = parseMarkdown(item[key])
+          if key in ['markdown', 'md']
+            item[key] = parseMarkdown(item[key])
+          if key is 'jade'
+            item[key] = parseJade(item[key])
         callback null, rv
       catch error
         error.filename = filename
@@ -25,7 +29,7 @@ readYAML = (filename, callback) ->
 
 traverseJson = (item, callback) ->
   for k, v of item
-    if k in ["markdown", "md", "body"]
+    if k in ["jade", "markdown", "md"]
       callback.apply(this, [item, k])
     if typeof v is "object"
       traverseJson v, callback
@@ -41,6 +45,12 @@ parseMarkdown = (data) ->
       return highlighter.highlightAuto(code)
 
   marked(data)
+
+parseJade = (data) ->
+  fn = jade.compile data,
+    pretty: true
+  return fn({})
+
 
 class YamlPage extends Page
 
