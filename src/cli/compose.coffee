@@ -6,10 +6,11 @@ path = require 'path'
 {logger} = require '../common' # lib common
 moment = require 'moment'
 
-types = ['post', 'slide']
+types = ['post', 'slide', 'canvas']
 themes =
   post: ['default']
   slide: ['beige', 'default', 'night', 'serif', 'simple', 'sky']
+  canvas: ['default']
 
 usage = """
 
@@ -40,6 +41,80 @@ options =
     alias: 'm'
     default: 'default'
 
+get_content = (type, theme, title) ->
+  now = moment().format('YYYY-MM-DD HH:mm')
+  content = {
+    default: """
+    ---
+    template: #{type}.jade
+    theme: #{theme}
+    title: #{title}
+    date: #{now}
+    comments: true
+    tags: []
+    ---
+
+
+    """,
+    canvas: """
+    template: #{type}.jade
+    theme: #{theme}
+    title: #{title}
+    date: #{now}
+    tags: []
+
+    customer_segments:
+      - List your target customers and users
+
+    early_adopters:
+      - List characteristics of your ideal customers
+
+    problem:
+      - List your top 1-3 problems
+
+    existing_alternatives:
+      - List how these problems are solved today
+
+    unique_value_proposition:
+      - Single, clear, compelling message that turns an unaware visitor into an interested prospect
+
+    high_level_concept:
+      - List your X for Y analogy (e.g. YouTube = Flickr for videos)
+
+    solution:
+      - Outline a possible solution for each problem
+
+    channels:
+      - List your path to customer
+
+    revenue_stream:
+      - List your source of revenue
+
+    cost_structure:
+      - List your fixed and variable costs
+
+    key_metrics:
+      - List the key numbers that tell you how your business is doing
+
+    unfair_advantage:
+      - Something that can't be easily copied or bought
+    """
+  }
+
+  return content[type] || content['default']
+
+get_ext = (type) ->
+  ext = {
+    default: '.markdown'
+    canvas: '.yml'
+  }
+  return ext[type] || ext['default']
+
+pluralize = (name) ->
+  # simple plurialize function, just consider s / es
+  if name[name.length-1] is 's'
+    return name + 'es'
+  return name + 's'
 
 compose = (argv) ->
   title = argv._[1]
@@ -57,22 +132,10 @@ compose = (argv) ->
     logger.error 'unknown document theme #{theme} for #{type}'
     return
 
-  now = moment().format('YYYY-MM-DD hh:mm')
   dt = moment().format('YYYY-MM-DD')
-  f = path.join process.cwd(), 'contents', type + 's', dt + '-' + title.replace(/\s+/g, '-') + '.markdown'
+  f = path.join process.cwd(), 'contents', pluralize(type), dt + '-' + title.toLowerCase().replace(/\s+/g, '-') + get_ext(type)
 
-  data = """
-  ---
-  template: #{type}.jade
-  theme: #{theme}
-  title: #{title}
-  date: #{now}
-  comments: true
-  tags: []
-  ---
-
-
-  """
+  data = get_content(type, theme, title)
   fs.writeFile f, data, (err) ->
     if err
       console.log err
