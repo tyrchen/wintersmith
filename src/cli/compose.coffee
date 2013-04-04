@@ -61,6 +61,7 @@ get_content = (type, theme, title) ->
     theme: #{theme}
     title: #{title}
     date: #{now}
+    comments: true
     tags: []
 
     customer_segments:
